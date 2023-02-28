@@ -111,16 +111,17 @@ const generateStatement = (subject) => {
     return statement;
 }
 
-const generatePPhrase = (statement, qty) => {
+const generatePPhrase = (statement) => {
     let pPhrase;
     let rPPhrase = {pPhrase:'', tags:[], id:null};
+    const qty = Math.floor(Math.random() * 3)
     for (let i = 0; i < qty; i++) {
+
         do {
             pPhrase = randomItem(generatePPhrases())
         } while (!pPhrase.tags.some(element => statement.tags.includes(element)) || rPPhrase.id === pPhrase.id);
-        if (rPPhrase.pPhrase.length > 0) {
-            rPPhrase.pPhrase += ' ';
-        }
+
+        if (rPPhrase.pPhrase.length > 0) {rPPhrase.pPhrase += ' ';}
         rPPhrase.pPhrase += pPhrase.pPhrase;
         rPPhrase.tags = pPhrase.tags;
         rPPhrase.id = pPhrase.id;
@@ -129,15 +130,23 @@ const generatePPhrase = (statement, qty) => {
     return rPPhrase;
 }
 
-const generateSentence = (subjectPref=null, pPhrasesQty=null) => {
-    if (pPhrasesQty === null) {
-        pPhrasesQty = Math.floor(Math.random() * 3)
-    } 
-    const subject = generateSubject(subjectPref);
-    const statement = generateStatement(subject);
-    const pPhrase = generatePPhrase(statement, pPhrasesQty)
-    return subject.word + ' ' + statement.statement + ' ' + pPhrase.pPhrase;
-}
+const generateSentence = (subjectPref=null) => {
+    const count = Math.floor(Math.random(0) * 3)
+    let sentence;
+    let i = 0;
+    do  {
+        const subject = generateSubject(subjectPref);
+        const statement = generateStatement(subject);
+        const pPhrase = generatePPhrase(statement)
+        if (i > 0) {
+            sentence += ' ' + randomItem(compounds) + ' ' + subject.word + ' ' + statement.statement + ' ' + pPhrase.pPhrase;
 
-console.log(generateSentence());
+        } else {
+            sentence = subject.word + ' ' + statement.statement + ' ' + pPhrase.pPhrase;
+        }
+        i++
+    } while (i < count)
+    console.log(count);
+    return sentence;
+}
 
