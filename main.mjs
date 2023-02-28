@@ -58,30 +58,30 @@ const generateSubjects = () => {
 const generateStatments = () => {
     return [
         // was out shopping
-        {statement:`${randomItem(misc10)} out ${randomItem(misc3)}`, tags:['person', 'activity3', 'activity4', 'activity6']},
+        {statement:`${randomItem(misc10)} out ${randomItem(misc3)}`, tags:['person', 'activity3', 'activity4', 'activity6'], id:'0'},
         // fotgot to clean
-        {statement:`${randomItem(misc2)} ${randomItem(misc)}`, tags:['person', 'activity2', 'activity6']},
+        {statement:`${randomItem(misc2)} ${randomItem(misc)}`, tags:['person', 'activity2', 'activity6'], id:'1'},
         // ate a steak
-        {statement:`${randomItem(misc11)} ${randomItem(food)}`, tags:['person', 'activity2', 'activity3', 'activity4', 'activity6']},
+        {statement:`${randomItem(misc11)} ${randomItem(food)}`, tags:['person', 'activity2', 'activity3', 'activity4', 'activity6'], id:'2'},
         // is shopping
-        {statement:`${randomItem(misc4)} ${randomItem(misc3)}`, tags:['person', 'activity2', 'activity3', 'activity4', 'activity6']},
-        // felt fun 
-        {statement:`${randomItem(misc5)} ${randomItem(misc6)}`, tags:['activity', 'object', 'activity2', 'activity4', 'activity6']},
+        {statement:`${randomItem(misc4)} ${randomItem(misc3)}`, tags:['person', 'activity2', 'activity3', 'activity4', 'activity6'], id:'3'},
+        // felt fun
+        {statement:`${randomItem(misc5)} ${randomItem(misc6)}`, tags:['activity', 'object', 'activity2', 'activity4', 'activity6'], id:'4'},
     ]
 }
 
 const generatePPhrases = () => {
     return [
-        // at the mall
-        {pPhrase:`${randomItem(misc8)} ${randomItem(places)}`, tags:['activity2', 'phrase1']},
-        // for dinner
-        {pPhrase:`for ${randomItem(misc9)}`, tags:['activity3', 'phrase1']},
-        // ate with
-        {pPhrase:`${randomItem(misc12)} ${randomItem(misc13)}`, tags:['activity4', 'phrase1']},
-        // at 12:00 PM
-        {pPhrase:`at ${generateTime()}`, tags:['activity5', 'phrase1']},
-        // on Monday
-        {pPhrase:`on ${randomItem(days)}`, tags:['activity6', 'phrase1']}
+        //at the mall
+        {pPhrase:`${randomItem(misc8)} ${randomItem(places)}`, tags:['activity2', 'phrase1'], id:'5'},
+        //for dinner
+        {pPhrase:`for ${randomItem(misc9)}`, tags:['activity3', 'phrase1'], id:'6'},
+        //ate with
+        {pPhrase:`${randomItem(misc12)} ${randomItem(misc13)}`, tags:['activity4', 'phrase1'], id:'7'},
+        //at 12:00 PM
+        {pPhrase:`at ${generateTime()}`, tags:['activity5', 'phrase1'], id:'8'},
+        //on Monday
+        {pPhrase:`on ${randomItem(days)}`, tags:['activity6', 'phrase1'], id:'9'}
     ]
 }
 
@@ -111,27 +111,33 @@ const generateStatement = (subject) => {
     return statement;
 }
 
-generatePPhrase = (statement, qty) => {
-    let wholePPhrase = {pPhrase:'', tags:[]};
+const generatePPhrase = (statement, qty) => {
     let pPhrase;
-    for (i = 0; i < qty; i++) {
+    let rPPhrase = {pPhrase:'', tags:[], id:null};
+    for (let i = 0; i < qty; i++) {
         do {
             pPhrase = randomItem(generatePPhrases())
-        } while (!pPhrase.tags.some(element => statement.tags.includes(element)));
-        wholePPhrase.pPhrase += ' ' + pPhrase.pPhrase
-        wholePPhrase.tags = pPhrase.tags
+        } while (!pPhrase.tags.some(element => statement.tags.includes(element)) || rPPhrase.id === pPhrase.id);
+        if (rPPhrase.pPhrase.length > 0) {
+            rPPhrase.pPhrase += ' ';
+        }
+        rPPhrase.pPhrase += pPhrase.pPhrase;
+        rPPhrase.tags = pPhrase.tags;
+        rPPhrase.id = pPhrase.id;
+        statement = pPhrase;
     }
-    return wholePPhrase;
+    return rPPhrase;
 }
 
 const generateSentence = (subjectPref=null, pPhrasesQty=null) => {
     if (pPhrasesQty === null) {
-        const pPhrasesQty = Math.floor(Math.random() * 2)
+        pPhrasesQty = Math.floor(Math.random() * 3)
     } 
     const subject = generateSubject(subjectPref);
     const statement = generateStatement(subject);
     const pPhrase = generatePPhrase(statement, pPhrasesQty)
-    return subject.word + ' ' + statement.statement + pPhrase.pPhrase;
+    return subject.word + ' ' + statement.statement + ' ' + pPhrase.pPhrase;
 }
 
-console.log(generateTime());
+console.log(generateSentence());
+
