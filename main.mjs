@@ -43,50 +43,56 @@ const misc12 = ['with', 'without', 'next to', 'close to']
 const misc13 = ['friends', 'family', 'co-workers']
 const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
-const subjects = [
-    {word:randomItem(femaleNames), tags:['female', 'person']},
-    {word:randomItem(maleNames), tags:['male', 'person']},
-    {word:randomItem(sports), tags:['activity']},
-    {word:randomItem(jobs), tags:['activity']},
-    {word:randomItem(hobbies), tags:['activity']},
-    {word:randomItem(drinks), tags:['object']},
-    {word:randomItem(food), tags:['object']},
-]
+const generateSubjects = () => {
+    return [
+        {word:randomItem(femaleNames), tags:['female', 'person']},
+        {word:randomItem(maleNames), tags:['male', 'person']},
+        {word:randomItem(sports), tags:['activity']},
+        {word:randomItem(jobs), tags:['activity']},
+        {word:randomItem(hobbies), tags:['activity']},
+        {word:randomItem(drinks), tags:['object']},
+        {word:randomItem(food), tags:['object']},
+    ]
+}
 
-const statements = [
-    // was out shopping
-    {statement:`${randomItem(misc10)} out ${randomItem(misc3)}`, tags:['person', 'activity3', 'activity4', 'activity6']},
-    // fotgot to clean
-    {statement:`${randomItem(misc2)} ${randomItem(misc)}`, tags:['person', 'activity2', 'activity6']},
-    // ate a steak
-    {statement:`${randomItem(misc11)} ${randomItem(food)}`, tags:['person', 'activity2', 'activity3', 'activity4', 'activity6']},
-    // is shopping
-    {statement:`${randomItem(misc4)} ${randomItem(misc3)}`, tags:['person', 'activity2', 'activity3', 'activity4', 'activity6']},
-    // felt fun 
-    {statement:`${randomItem(misc5)} ${randomItem(misc6)}`, tags:['activity', 'object', 'activity2', 'activity4', 'activity6']},
-]
+const generateStatments = () => {
+    return [
+        // was out shopping
+        {statement:`${randomItem(misc10)} out ${randomItem(misc3)}`, tags:['person', 'activity3', 'activity4', 'activity6']},
+        // fotgot to clean
+        {statement:`${randomItem(misc2)} ${randomItem(misc)}`, tags:['person', 'activity2', 'activity6']},
+        // ate a steak
+        {statement:`${randomItem(misc11)} ${randomItem(food)}`, tags:['person', 'activity2', 'activity3', 'activity4', 'activity6']},
+        // is shopping
+        {statement:`${randomItem(misc4)} ${randomItem(misc3)}`, tags:['person', 'activity2', 'activity3', 'activity4', 'activity6']},
+        // felt fun 
+        {statement:`${randomItem(misc5)} ${randomItem(misc6)}`, tags:['activity', 'object', 'activity2', 'activity4', 'activity6']},
+    ]
+}
 
-const pPhrases = [
-    // at the mall
-    {pPhrase:`${randomItem(misc8)} ${randomItem(places)}`, tags:['activity2', 'phrase1']},
-    // for dinner
-    {pPhrase:`for ${randomItem(misc9)}`, tags:['activity3', 'phrase1']},
-    // ate with
-    {pPhrase:`${randomItem(misc12)} ${randomItem(misc13)}`, tags:['activity4', 'phrase1']},
-    // at 12:00 PM
-    {pPhrase:`at ${generateTime()}`, tags:['activity5', 'phrase1']},
-    // on Monday
-    {pPhrase:`on ${randomItem(days)}`, tags:['activity6', 'phrase1']}
-]
+const generatePPhrases = () => {
+    return [
+        // at the mall
+        {pPhrase:`${randomItem(misc8)} ${randomItem(places)}`, tags:['activity2', 'phrase1']},
+        // for dinner
+        {pPhrase:`for ${randomItem(misc9)}`, tags:['activity3', 'phrase1']},
+        // ate with
+        {pPhrase:`${randomItem(misc12)} ${randomItem(misc13)}`, tags:['activity4', 'phrase1']},
+        // at 12:00 PM
+        {pPhrase:`at ${generateTime()}`, tags:['activity5', 'phrase1']},
+        // on Monday
+        {pPhrase:`on ${randomItem(days)}`, tags:['activity6', 'phrase1']}
+    ]
+}
 
 const generateSubject = (subjectPref=null) => {
     if (subjectPref === null) {
-        return randomItem(subjects);
+        return randomItem(generateSubjects());
     } else if (typeof subjectPref === 'string') {
         let subject;
 
         do {
-            subject = randomItem(subjects)
+            subject = randomItem(generateSubjects())
         } while (subject.word != subjectPref || subject.tags.some(element => element === subjectPref))
 
         return subject;
@@ -99,17 +105,33 @@ const generateSubject = (subjectPref=null) => {
 const generateStatement = (subject) => {
     let statement;
     do {
-        statement = randomItem(statements)
+        statement = randomItem(generateStatments())
     } while (!statement.tags.some(element => subject.tags.includes(element)));
 
     return statement;
 }
 
-const generateSentence = (subjectPref=null) => {
+generatePPhrase = (statement, qty) => {
+    let wholePPhrase = {pPhrase:'', tags:[]};
+    let pPhrase;
+    for (i = 0; i < qty; i++) {
+        do {
+            pPhrase = randomItem(generatePPhrases())
+        } while (!pPhrase.tags.some(element => statement.tags.includes(element)));
+        wholePPhrase.pPhrase += ' ' + pPhrase.pPhrase
+        wholePPhrase.tags = pPhrase.tags
+    }
+    return wholePPhrase;
+}
+
+const generateSentence = (subjectPref=null, pPhrasesQty=null) => {
+    if (pPhrasesQty === null) {
+        const pPhrasesQty = Math.floor(Math.random() * 2)
+    } 
     const subject = generateSubject(subjectPref);
-    console.log(subject);
     const statement = generateStatement(subject);
-    return subject.word + ' ' + statement.statement;
+    const pPhrase = generatePPhrase(statement, pPhrasesQty)
+    return subject.word + ' ' + statement.statement + pPhrase.pPhrase;
 }
 
 console.log(generateTime());
