@@ -1,13 +1,16 @@
 import fs from 'fs';
 
+// Convert data from text files to an array
 const convertTxtToArray = (path) => {
     return fs.readFileSync(path, 'utf8').split('\n').map(line => line.trim());
 }
 
+// Randomly selects items from an array
 const randomItem = (arr) => {
     return arr[Math.floor(Math.random() * arr.length)]
 }
 
+// Gives a randomly generated time
 const generateTime = () => {
     const randomHour = Math.floor(Math.random() * 24); 
     const randomMinute = Math.floor(Math.random() * 60);
@@ -20,6 +23,7 @@ const generateTime = () => {
         hour12: true});
 }
 
+// Arrays containing data for randomly generated sentences
 const femaleNames = (convertTxtToArray('female_names.txt'));
 const maleNames = (convertTxtToArray('male_names.txt'));
 const sports = ['Basketball', 'Baseball', 'Football', 'Hockey'];
@@ -49,6 +53,16 @@ const misc17 = ['can', 'could never', 'cannot', 'will never', 'will always', 'wi
 const misc18 = ['better', 'worse', 'the same']
 const misc19 = ['than', 'without', 'with']
 
+// Functions that generate each part of the sentence are below
+// Each are made into functions so that their items can be re-initialized as each priece calls the randomItem function
+// Each item is made into an object containing a string and tags, and some with id's to make sentences more comprehensible
+/* the tags are a little messy, but the alternatives would have taken me an unreasonable amount of time(and probably be even more difficult to follow).
+If an object has the same tag as another object, they can be Concatenated(joined).
+If an object has the same id as another object, they cannot be Concatenated.
+Above each object are examples of what strings they will generate.
+*/ 
+
+// Returns an array of randomly generated subjects
 const generateSubjects = () => {
     return [
         {word:randomItem(femaleNames), tags:['female', 'person']},
@@ -61,6 +75,7 @@ const generateSubjects = () => {
     ]
 }
 
+// Returns an array of randomly generated statements 
 const generateStatments = () => {
     return [
         // was out shopping
@@ -80,6 +95,7 @@ const generateStatments = () => {
     ]
 }
 
+// Returns an array of randomly generated Phrases
 const generatePPhrases = () => {
     return [
         //at the mall
@@ -95,6 +111,8 @@ const generatePPhrases = () => {
     ]
 }
 
+// Calls the generateSubjects function and randomly selects an item
+// subjectPref can be ignored
 const generateSubject = (subjectPref=null) => {
     if (subjectPref === null) {
         return randomItem(generateSubjects());
@@ -112,6 +130,7 @@ const generateSubject = (subjectPref=null) => {
     }
 }
 
+// Calls generateStatements function and randomly selects an item
 const generateStatement = (subject) => {
     let statement;
     do {
@@ -121,6 +140,8 @@ const generateStatement = (subject) => {
     return statement;
 }
 
+// Calls generatePPhrases function and randomly selects an item
+// It may by random add an additional phrase to itself
 const generatePPhrase = (statement) => {
     let pPhrase;
     let rPPhrase = {pPhrase:'', tags:[], id:null};
@@ -140,6 +161,7 @@ const generatePPhrase = (statement) => {
     return rPPhrase;
 }
 
+// Calls generateSubject, generateStatement, generatePPhrase and puts their string values together
 const generateSentence = (subjectPref=null) => {
     const max = Math.floor(Math.random(0) * 3)
     let sentence;
@@ -162,6 +184,7 @@ const generateSentence = (subjectPref=null) => {
     return sentence;
 }
 
+// Calls generateSentence a random number of times up to its set limit and add each generated sentence to the paragraph variable 
 const generateParagraph = () => {
     const max = Math.floor(Math.random(0) * 6)
     let paragraph;
@@ -179,4 +202,15 @@ const generateParagraph = () => {
     return paragraph;
 }
 
+/* So just to re-iterate for more clarification: 
+    generateParagraph generates a random number of sentences between 1 and the set number (6)
+        generateSentence generates a random number between 1 and 2 of subjects, statements and phrases
+            generateSubject selects a random subject
+                each subject that can be randomly selected is an object with a randomly generated string
+            generateStatement selects a random compatible statement
+                each statment that can be randomly selected is an object with a randomly generated string
+            generatePPhrase selects a random compatible phrase
+                each phrase that can be randomly selected is an object with a randomly generated string
+            */
+            
 console.log(generateParagraph())
