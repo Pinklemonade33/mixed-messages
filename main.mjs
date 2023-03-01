@@ -1,10 +1,10 @@
 import fs from 'fs';
 
-const convertTxtToArray = path => {
+const convertTxtToArray = (path) => {
     return fs.readFileSync(path, 'utf8').split('\n').map(line => line.trim());
 }
 
-const randomItem = arr => {
+const randomItem = (arr) => {
     return arr[Math.floor(Math.random() * arr.length)]
 }
 
@@ -42,6 +42,12 @@ const misc11 = ['ate', 'had']
 const misc12 = ['with', 'without', 'next to', 'close to']
 const misc13 = ['friends', 'family', 'co-workers']
 const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+const misc14 = ['the bane', 'the end', 'the greatest thing', 'the worst thing', 'the funniest thing']
+const misc15 = ['my', 'your', 'his', 'her', 'their']
+const misc16 = ['existence', 'life', 'days of breathing']
+const misc17 = ['can', 'could never', 'cannot', 'will never', 'will always', 'will', 'might']
+const misc18 = ['better', 'worse', 'the same']
+const misc19 = ['than', 'without', 'with']
 
 const generateSubjects = () => {
     return [
@@ -67,6 +73,10 @@ const generateStatments = () => {
         {statement:`${randomItem(misc4)} ${randomItem(misc3)}`, tags:['person', 'activity2', 'activity3', 'activity4', 'activity6'], id:'3'},
         // felt fun
         {statement:`${randomItem(misc5)} ${randomItem(misc6)}`, tags:['activity', 'object', 'activity2', 'activity4', 'activity6'], id:'4'},
+        // the bane of your existence
+        {statement:`${randomItem(misc4)} ${randomItem(misc14)} of ${randomItem(misc15)} ${randomItem(misc16)}`, tags:['activity', 'object', 'activity2', 'activity4', 'activity6'], id:'5'},
+        // can never be better than shopping
+        {statement:`${randomItem(misc17)} be ${randomItem(misc18)} ${randomItem(misc19)} ${randomItem(misc13)}`, tags:['activity', 'object', 'activity2', 'activity4', 'activity6'], id:'6'}
     ]
 }
 
@@ -76,7 +86,7 @@ const generatePPhrases = () => {
         {pPhrase:`${randomItem(misc8)} ${randomItem(places)}`, tags:['activity2', 'phrase1'], id:'5'},
         //for dinner
         {pPhrase:`for ${randomItem(misc9)}`, tags:['activity3', 'phrase1'], id:'6'},
-        //ate with
+        //with friends
         {pPhrase:`${randomItem(misc12)} ${randomItem(misc13)}`, tags:['activity4', 'phrase1'], id:'7'},
         //at 12:00 PM
         {pPhrase:`at ${generateTime()}`, tags:['activity5', 'phrase1'], id:'8'},
@@ -131,7 +141,7 @@ const generatePPhrase = (statement) => {
 }
 
 const generateSentence = (subjectPref=null) => {
-    const count = Math.floor(Math.random(0) * 3)
+    const max = Math.floor(Math.random(0) * 3)
     let sentence;
     let i = 0;
     do  {
@@ -139,14 +149,34 @@ const generateSentence = (subjectPref=null) => {
         const statement = generateStatement(subject);
         const pPhrase = generatePPhrase(statement)
         if (i > 0) {
-            sentence += ' ' + randomItem(compounds) + ' ' + subject.word + ' ' + statement.statement + ' ' + pPhrase.pPhrase;
-
+            sentence += ' ' + randomItem(compounds) + ' ' + subject.word + ' ' + statement.statement
         } else {
-            sentence = subject.word + ' ' + statement.statement + ' ' + pPhrase.pPhrase;
+            subject.word = subject.word.charAt(0).toUpperCase() + subject.word.slice(1);
+            sentence = subject.word + ' ' + statement.statement
+        }
+        if (pPhrase.pPhrase != '') {
+            sentence += ' ' + pPhrase.pPhrase;
         }
         i++
-    } while (i < count)
-    console.log(count);
+    } while (i < max)
     return sentence;
 }
 
+const generateParagraph = () => {
+    const max = Math.floor(Math.random(0) * 6)
+    let paragraph;
+    let sentence;
+    let i = 0;
+    do {
+        sentence = generateSentence();
+        if (i > 0) {
+            paragraph += ' ' + sentence + '.';
+        } else {
+            paragraph = sentence + '.';
+        } 
+        i++
+    } while (i < max);
+    return paragraph;
+}
+
+console.log(generateParagraph())
